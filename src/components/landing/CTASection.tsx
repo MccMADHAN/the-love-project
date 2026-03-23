@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useScrollReveal } from "./useScrollReveal";
 
 export function CTASection() {
@@ -17,9 +18,11 @@ export function CTASection() {
           <p className="text-lg text-muted-foreground mb-10 max-w-lg mx-auto">
             Join thousands of creators shipping real products every day. Your next idea is one prompt away.
           </p>
-          <Button variant="hero" size="lg" className="text-base px-10 h-13 rounded-xl">
-            Start building for free
-            <ArrowRight className="w-4 h-4 ml-1" />
+          <Button variant="hero" size="lg" className="text-base px-10 h-13 rounded-xl" asChild>
+            <Link to="/builder">
+              Start building for free
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
           </Button>
         </div>
       </div>

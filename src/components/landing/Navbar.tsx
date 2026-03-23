@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Zap, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -36,7 +37,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Button variant="ghost" size="sm">Sign in</Button>
-          <Button variant="hero" size="sm">Start building</Button>
+          <Button variant="hero" size="sm" asChild><Link to="/builder">Start building</Link></Button>
         </div>
 
         <button
@@ -62,7 +63,7 @@ export function Navbar() {
             ))}
             <div className="flex gap-3 pt-3 border-t border-border">
               <Button variant="ghost" size="sm" className="flex-1">Sign in</Button>
-              <Button variant="hero" size="sm" className="flex-1">Start building</Button>
+              <Button variant="hero" size="sm" className="flex-1" asChild><Link to="/builder">Start building</Link></Button>
             </div>
           </div>
         </div>
