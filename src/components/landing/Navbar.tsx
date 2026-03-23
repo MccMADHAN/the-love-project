@@ -37,7 +37,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Button variant="ghost" size="sm">Sign in</Button>
-          <Button variant="hero" size="sm">Start building</Button>
+          <Button variant="hero" size="sm" asChild><Link to="/builder">Start building</Link></Button>
         </div>
 
         <button
