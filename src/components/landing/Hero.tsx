@@ -31,9 +31,11 @@ export function Hero() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal-up delay-300">
-            <Button variant="hero" size="lg" className="text-base px-8 h-12 rounded-xl">
-              Start building for free
-              <ArrowRight className="w-4 h-4 ml-1" />
+            <Button variant="hero" size="lg" className="text-base px-8 h-12 rounded-xl" asChild>
+              <Link to="/builder">
+                Start building for free
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
             </Button>
             <Button variant="hero-outline" size="lg" className="text-base px-8 h-12 rounded-xl">
               Watch demo

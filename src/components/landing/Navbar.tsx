@@ -63,7 +63,7 @@ export function Navbar() {
             ))}
             <div className="flex gap-3 pt-3 border-t border-border">
               <Button variant="ghost" size="sm" className="flex-1">Sign in</Button>
-              <Button variant="hero" size="sm" className="flex-1">Start building</Button>
+              <Button variant="hero" size="sm" className="flex-1" asChild><Link to="/builder">Start building</Link></Button>
             </div>
           </div>
         </div>
