@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye, Rocket, ExternalLink, Copy, Check } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye, Rocket, ExternalLink, Copy, Check, Globe } from "lucide-react";
 import { toast } from "sonner";
 
 const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
@@ -107,7 +108,7 @@ export default function Builder() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ html: htmlCode }),
+        body: JSON.stringify({ html: htmlCode, title: prompt.trim().slice(0, 60), prompt: prompt.trim() }),
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Deploy failed" }));
@@ -137,10 +138,16 @@ export default function Builder() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
       <header className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0">
-        <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          Back to home
-        </a>
+        <div className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Home
+          </a>
+          <Link to="/deployments" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Globe className="w-4 h-4" />
+            My Sites
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <span className="font-semibold text-sm">Buildly Studio</span>
