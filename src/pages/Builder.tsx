@@ -138,10 +138,16 @@ export default function Builder() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
       <header className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0">
-        <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          Back to home
-        </a>
+        <div className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Home
+          </a>
+          <Link to="/deployments" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Globe className="w-4 h-4" />
+            My Sites
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <span className="font-semibold text-sm">Buildly Studio</span>
