@@ -11,7 +11,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { html } = await req.json();
+    const { html, title, prompt } = await req.json();
     if (!html) throw new Error("HTML content is required");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -32,13 +32,18 @@ serve(async (req) => {
 
     if (uploadError) throw uploadError;
 
-    // Save deployment record
-    await supabase.from("deployments").insert({ slug });
-
     // Get public URL
     const { data: urlData } = supabase.storage
       .from("deployed-sites")
       .getPublicUrl(filePath);
+
+    // Save deployment record with metadata
+    await supabase.from("deployments").insert({
+      slug,
+      title: title || "Untitled Site",
+      prompt: prompt || null,
+      url: urlData.publicUrl,
+    });
 
     return new Response(
       JSON.stringify({ url: urlData.publicUrl, slug }),
