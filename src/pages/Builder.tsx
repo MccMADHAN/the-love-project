@@ -4,14 +4,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye, Rocket, ExternalLink, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
-const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
+const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
+const DEPLOY_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/deploy-site`;
 
 export default function Builder() {
   const [prompt, setPrompt] = useState("");
   const [htmlCode, setHtmlCode] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showCode, setShowCode] = useState(false);
-
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployedUrl, setDeployedUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const generate = useCallback(async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
