@@ -180,28 +180,22 @@ export default function Builder() {
           )}
           {!htmlCode && <div />}
         </div>
-      <header className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0">
-        <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          Back to home
-        </a>
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm">Buildly Studio</span>
-        </div>
-        {htmlCode && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowCode(!showCode)}
-            className="gap-1.5"
-          >
-            {showCode ? <Eye className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
-            {showCode ? "Preview" : "Code"}
-          </Button>
-        )}
-        {!htmlCode && <div />}
       </header>
+
+      {/* Deployed URL banner */}
+      {deployedUrl && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2.5 flex items-center justify-center gap-3">
+          <span className="text-sm font-medium text-primary">🎉 Your site is live!</span>
+          <a href={deployedUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline underline-offset-2 flex items-center gap-1 truncate max-w-xs">
+            {deployedUrl.replace(/^https?:\/\//, '').slice(0, 50)}
+            <ExternalLink className="w-3 h-3 shrink-0" />
+          </a>
+          <Button variant="ghost" size="sm" onClick={copyUrl} className="h-7 px-2 gap-1 text-xs">
+            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+            {copied ? "Copied" : "Copy"}
+          </Button>
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left panel: Prompt */}
