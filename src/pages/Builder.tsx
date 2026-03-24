@@ -107,7 +107,7 @@ export default function Builder() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ html: htmlCode }),
+        body: JSON.stringify({ html: htmlCode, title: prompt.trim().slice(0, 60), prompt: prompt.trim() }),
       });
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Deploy failed" }));
