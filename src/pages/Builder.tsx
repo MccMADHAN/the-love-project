@@ -22,7 +22,7 @@ export default function Builder() {
     setShowCode(false);
 
     try {
-      const resp = await fetch(FUNCTION_URL, {
+      const resp = await fetch(GENERATE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
