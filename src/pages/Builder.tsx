@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye, Rocket, ExternalLink, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
