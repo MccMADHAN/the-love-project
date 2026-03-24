@@ -1,17 +1,20 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, ArrowLeft, Code, Eye, Rocket, ExternalLink, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
-const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
+const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-site`;
+const DEPLOY_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/deploy-site`;
 
 export default function Builder() {
   const [prompt, setPrompt] = useState("");
   const [htmlCode, setHtmlCode] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showCode, setShowCode] = useState(false);
-
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployedUrl, setDeployedUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const generate = useCallback(async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
@@ -19,7 +22,7 @@ export default function Builder() {
     setShowCode(false);
 
     try {
-      const resp = await fetch(FUNCTION_URL, {
+      const resp = await fetch(GENERATE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,6 +96,41 @@ export default function Builder() {
     }
   }, [prompt]);
 
+  const deploy = useCallback(async () => {
+    if (!htmlCode) return;
+    setIsDeploying(true);
+    setDeployedUrl(null);
+    try {
+      const resp = await fetch(DEPLOY_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ html: htmlCode }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Deploy failed" }));
+        throw new Error(err.error || "Deploy failed");
+      }
+      const data = await resp.json();
+      setDeployedUrl(data.url);
+      toast.success("Site deployed successfully!");
+    } catch (e: any) {
+      toast.error(e.message || "Deploy failed");
+    } finally {
+      setIsDeploying(false);
+    }
+  }, [htmlCode]);
+
+  const copyUrl = () => {
+    if (deployedUrl) {
+      navigator.clipboard.writeText(deployedUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const iframeSrcDoc = htmlCode || undefined;
 
   return (
@@ -107,19 +145,57 @@ export default function Builder() {
           <Sparkles className="w-4 h-4 text-primary" />
           <span className="font-semibold text-sm">Buildly Studio</span>
         </div>
-        {htmlCode && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowCode(!showCode)}
-            className="gap-1.5"
-          >
-            {showCode ? <Eye className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
-            {showCode ? "Preview" : "Code"}
-          </Button>
-        )}
-        {!htmlCode && <div />}
+        <div className="flex items-center gap-2">
+          {htmlCode && !isGenerating && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={deploy}
+              disabled={isDeploying}
+              className="gap-1.5"
+            >
+              {isDeploying ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Deploying...
+                </>
+              ) : (
+                <>
+                  <Rocket className="w-3.5 h-3.5" />
+                  Deploy free
+                </>
+              )}
+            </Button>
+          )}
+          {htmlCode && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCode(!showCode)}
+              className="gap-1.5"
+            >
+              {showCode ? <Eye className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
+              {showCode ? "Preview" : "Code"}
+            </Button>
+          )}
+          {!htmlCode && <div />}
+        </div>
       </header>
+
+      {/* Deployed URL banner */}
+      {deployedUrl && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-2.5 flex items-center justify-center gap-3">
+          <span className="text-sm font-medium text-primary">🎉 Your site is live!</span>
+          <a href={deployedUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline underline-offset-2 flex items-center gap-1 truncate max-w-xs">
+            {deployedUrl.replace(/^https?:\/\//, '').slice(0, 50)}
+            <ExternalLink className="w-3 h-3 shrink-0" />
+          </a>
+          <Button variant="ghost" size="sm" onClick={copyUrl} className="h-7 px-2 gap-1 text-xs">
+            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+            {copied ? "Copied" : "Copy"}
+          </Button>
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left panel: Prompt */}
