@@ -96,11 +96,90 @@ export default function Builder() {
     }
   }, [prompt]);
 
+  const deploy = useCallback(async () => {
+    if (!htmlCode) return;
+    setIsDeploying(true);
+    setDeployedUrl(null);
+    try {
+      const resp = await fetch(DEPLOY_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ html: htmlCode }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Deploy failed" }));
+        throw new Error(err.error || "Deploy failed");
+      }
+      const data = await resp.json();
+      setDeployedUrl(data.url);
+      toast.success("Site deployed successfully!");
+    } catch (e: any) {
+      toast.error(e.message || "Deploy failed");
+    } finally {
+      setIsDeploying(false);
+    }
+  }, [htmlCode]);
+
+  const copyUrl = () => {
+    if (deployedUrl) {
+      navigator.clipboard.writeText(deployedUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const iframeSrcDoc = htmlCode || undefined;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
+      <header className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0">
+        <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          Back to home
+        </a>
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary" />
+          <span className="font-semibold text-sm">Buildly Studio</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {htmlCode && !isGenerating && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={deploy}
+              disabled={isDeploying}
+              className="gap-1.5"
+            >
+              {isDeploying ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Deploying...
+                </>
+              ) : (
+                <>
+                  <Rocket className="w-3.5 h-3.5" />
+                  Deploy free
+                </>
+              )}
+            </Button>
+          )}
+          {htmlCode && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCode(!showCode)}
+              className="gap-1.5"
+            >
+              {showCode ? <Eye className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
+              {showCode ? "Preview" : "Code"}
+            </Button>
+          )}
+          {!htmlCode && <div />}
+        </div>
       <header className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0">
         <a href="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" />
